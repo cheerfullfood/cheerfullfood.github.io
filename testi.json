@@ -1,0 +1,13 @@
+// testi.json
+[
+  {
+    "name": "Rina",
+    "text": "Nasinya enak dan porsinya pas. Pelayanan cepat!",
+    "rating": 5
+  },
+  {
+    "name": "Joko",
+    "text": "Rasanya oke, tapi sedikit kurang pedas.",
+    "rating": 3
+  }
+]

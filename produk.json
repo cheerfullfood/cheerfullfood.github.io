@@ -1,0 +1,21 @@
+// produk.json
+[
+  {
+    "id": 1,
+    "name": "Nasi Goreng Spesial",
+    "desc": "Nasi goreng dengan topping ayam, telur, dan kerupuk. Pilihan bumbu khas rumah kami.",
+    "price": "Rp25.000",
+    "img": "https://source.unsplash.com/800x600/?fried-rice",
+    "link": "https://wa.me/6281234567890",
+    "badge": "Best Seller"
+  },
+  {
+    "id": 2,
+    "name": "Es Teh Manis",
+    "desc": "Es teh segar pelepas dahaga, dibuat dari teh pilihan dan gula tebu asli.",
+    "price": "Rp5.000",
+    "img": "https://source.unsplash.com/800x600/?iced-tea",
+    "link": "https://wa.me/6281234567890",
+    "badge": "Populer"
+  }
+]
