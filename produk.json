@@ -1,4 +1,3 @@
-// produk.json
 [
   {
     "id": 1,
@@ -18,4 +17,5 @@
     "link": "https://wa.me/6281234567890",
     "badge": "Populer"
   }
+
 ]
