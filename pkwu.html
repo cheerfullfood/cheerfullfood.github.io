@@ -1,0 +1,322 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Restoku - Menu & Tim</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* Background: soft gradient with subtle radial texture + faint pattern */
+    body {
+      background-image:
+        radial-gradient( circle at 10% 20%, rgba(249, 115, 22, 0.03), transparent 10% ),
+        radial-gradient( circle at 80% 80%, rgba(59, 130, 246, 0.02), transparent 10% ),
+        linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    /* Section heading style */
+    .section-title { display:flex; align-items:center; gap:12px; justify-content:center; }
+    .section-title h2 { font-weight:700; }
+    .section-accent { width:56px; height:6px; border-radius:6px; background: linear-gradient(90deg,#f97316,#ef4444); box-shadow:0 6px 18px rgba(239,68,68,0.12); }
+
+    /* Product grid & cards */
+    .product-grid { align-items:stretch; }
+    .product-card { display:flex; flex-direction:column; height:100%; border-radius:16px; overflow:hidden; }
+    .card-body { padding:16px; display:flex; flex-direction:column; flex:1 1 auto; }
+    .card-footer { margin-top:auto; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+
+    .product-image-wrap { position:relative; }
+    .product-badge { position:absolute; left:12px; top:12px; background:rgba(255,255,255,0.9); padding:6px 10px; border-radius:999px; font-weight:600; font-size:12px; color:#111827; box-shadow:0 6px 16px rgba(2,6,23,0.06);} 
+
+    /* Hover/Focus */
+    .product-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 30px 80px rgba(2,6,23,0.12); }
+    .product-card { transition: transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .28s; }
+
+    /* Modal styles */
+    .modal-backdrop { position: fixed; inset: 0; background: linear-gradient(180deg, rgba(2,6,23,0.5), rgba(2,6,23,0.65)); display:flex; align-items:center; justify-content:center; z-index:70; padding:24px; }
+    .modal-card { max-width:980px; width:100%; border-radius:14px; overflow:hidden; box-shadow:0 28px 80px rgba(2,6,23,0.5); background: linear-gradient(180deg,#ffffff,#fff7f5); }
+
+    /* Team styles */
+    .team-card { padding:18px; border-radius:12px; background:linear-gradient(180deg,#ffffff,#f8fafc); display:flex; gap:12px; align-items:center; box-shadow:0 10px 30px rgba(2,6,23,0.06); }
+    .avatar { width:64px; height:64px; border-radius:999px; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; }
+
+    /* Footer responsive */
+    #site-footer { text-align:center; position:static; margin-top:2rem; }
+    @media (max-width:640px) { #site-footer { position:fixed; bottom:16px; right:16px; left:auto; width:auto; padding:10px 14px; border-radius:12px; box-shadow:0 8px 30px rgba(2,6,23,0.16); z-index:60; margin:0; } }
+
+    /* Small polish */
+    :focus { outline: 3px solid rgba(99,102,241,0.14); outline-offset:3px; }
+  </style>
+</head>
+<body class="text-gray-800">
+  <!-- Navbar -->
+  <nav class="flex justify-between items-center p-4 bg-white shadow-md sticky top-0 z-50">
+    <h1 class="text-xl font-bold text-red-600">Restoku</h1>
+    <div class="space-x-4">
+      <a href="#menu" class="hover:text-red-500">Menu</a>
+      <a href="#testimonials" class="hover:text-red-500">Testimoni</a>
+      <a href="#team" class="hover:text-red-500">Tim Kami</a>
+    </div>
+  </nav>
+
+  <!-- Hero with decorative SVG -->
+  <header class="p-6 pt-8 max-w-5xl mx-auto reveal" id="hero">
+    <div class="bg-white rounded-2xl shadow-lg p-6 md:flex items-center relative overflow-hidden">
+      <svg class="absolute right-0 top-0 transform translate-x-12 -translate-y-12 opacity-20" width="280" height="280" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#fb923c"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs><circle cx="60" cy="60" r="80" fill="url(#g1)"/></svg>
+      <div class="md:flex-1">
+        <h2 class="text-3xl font-bold mb-2">Selamat datang di <span class="text-red-600">Restoku</span></h2>
+        <p class="text-gray-600">Menu pilihan, bahan segar, dan layanan ramah. Klik produk untuk melihat detail dan memesan.</p>
+      </div>
+      <div class="mt-4 md:mt-0 md:ml-6">
+        <a href="#menu" class="inline-block bg-red-600 text-white py-2 px-4 rounded-xl shadow hover:bg-red-700 buy-btn">Lihat Menu</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Menu Produk (rendered from produk.json) -->
+  <section id="menu" class="p-6 max-w-6xl mx-auto reveal">
+    <div class="section-title mb-6">
+      <div class="section-accent"></div>
+      <h2 class="text-2xl font-bold">Menu Produk</h2>
+      <div style="width:56px"></div>
+    </div>
+    <div id="product-grid" class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 product-grid">
+      <!-- Produk akan dirender dari produk.json -->
+    </div>
+  </section>
+
+  <!-- Testimonials (rendered from testi.json) -->
+  <section id="testimonials" class="p-6 max-w-6xl mx-auto reveal bg-white rounded-2xl shadow-lg mt-8">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold">Testimoni Pelanggan</h2>
+        <p class="text-sm text-gray-500">(Tambah testimoni via <code>testi.json</code>)</p>
+      </div>
+
+      <div id="testimonial-list" class="grid sm:grid-cols-2 gap-4">
+        <!-- Testimoni akan dirender dari testi.json -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Tim Kami (lebih menarik) -->
+  <section id="team" class="p-6 max-w-6xl mx-auto reveal">
+    <div class="section-title mb-6">
+      <div class="section-accent"></div>
+      <h2 class="text-2xl font-bold">Tim Kami</h2>
+      <div style="width:56px"></div>
+    </div>
+    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <!-- Team cards (static) -->
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#f97316,#ef4444);">A</div>
+        <div>
+          <p class="font-semibold">Andi</p>
+          <p class="text-sm text-gray-600">Pemilik • Mengawasi operasional & kualitas rasa.</p>
+        </div>
+      </div>
+
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#60a5fa,#7c3aed);">B</div>
+        <div>
+          <p class="font-semibold">Budi</p>
+          <p class="text-sm text-gray-600">Koki • Ahli bumbu & resep andalan.</p>
+        </div>
+      </div>
+
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#34d399,#10b981);">C</div>
+        <div>
+          <p class="font-semibold">Citra</p>
+          <p class="text-sm text-gray-600">Kasir • Ramah & cekatan melayani pembayaran.</p>
+        </div>
+      </div>
+
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#f472b6,#fb7185);">D</div>
+        <div>
+          <p class="font-semibold">Dewi</p>
+          <p class="text-sm text-gray-600">Waiter • Menjaga kebersihan & kenyamanan tamu.</p>
+        </div>
+      </div>
+
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#f59e0b,#f97316);">E</div>
+        <div>
+          <p class="font-semibold">Eka</p>
+          <p class="text-sm text-gray-600">Barista • Spesialis minuman kopi & teh.</p>
+        </div>
+      </div>
+
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#60a5fa,#06b6d4);">F</div>
+        <div>
+          <p class="font-semibold">Fajar</p>
+          <p class="text-sm text-gray-600">Marketing • Bertanggung jawab promosi & sosial media.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="site-footer" class="bg-red-600 text-white text-center p-4">
+    <p class="text-sm">&copy; 2025 Restoku. All rights reserved.</p>
+  </footer>
+
+  <!-- Modal (hidden by default). Removed second 'Tutup' button as requested -->
+  <div id="product-modal" class="hidden" aria-hidden="true">
+    <div class="modal-backdrop" role="dialog" aria-modal="true">
+      <div class="modal-card modal-hero">
+        <div class="md:flex">
+          <div class="md:w-1/2 product-image-wrap">
+            <span class="product-badge" id="modal-badge">Top</span>
+            <img id="modal-img" src="" alt="" class="w-full h-64 object-cover">
+          </div>
+          <div class="p-6 md:w-1/2">
+            <button id="modal-close" class="text-gray-500 float-right" aria-label="Tutup modal">&times;</button>
+            <h3 id="modal-name" class="text-2xl font-bold mb-2"></h3>
+            <p id="modal-desc" class="text-gray-600 mb-4"></p>
+            <p id="modal-price" class="font-bold text-lg mb-4"></p>
+            <div class="flex gap-3">
+              <a id="modal-buy" class="bg-red-600 text-white px-4 py-2 rounded-lg inline-block">Pesan via WA</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // helper: create element with classes
+    function e(tag, cls, html) { const el = document.createElement(tag); if (cls) el.className = cls; if (html) el.innerHTML = html; return el; }
+
+    // render stars for testimonials
+    function renderStars(container, rating) {
+      container.innerHTML = '';
+      rating = Math.max(0, Math.min(5, Math.round(rating)));
+      for (let i = 1; i <= 5; i++) {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('aria-hidden', 'true');
+        svg.classList.add('star');
+        svg.innerHTML = '<path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.4 8.168L12 18.896l-7.334 3.866 1.4-8.168L.132 9.21l8.2-1.192z"/>';
+        svg.style.width = '18px'; svg.style.height = '18px'; svg.style.marginRight = '6px';
+        svg.style.fill = (i <= rating) ? '#f59e0b' : '#d1d5db';
+        container.appendChild(svg);
+      }
+    }
+
+    // load and render products
+    async function loadProducts() {
+      try {
+        const res = await fetch('produk.json');
+        if (!res.ok) throw new Error('produk.json tidak ditemukan');
+        const products = await res.json();
+        const grid = document.getElementById('product-grid');
+        grid.innerHTML = '';
+        products.forEach(p => {
+          const art = e('article', 'rounded-2xl shadow-md bg-white overflow-hidden card product-card');
+          art.tabIndex = 0;
+          art.dataset.name = p.name; art.dataset.desc = p.desc; art.dataset.price = p.price; art.dataset.img = p.img; art.dataset.link = p.link; art.dataset.badge = p.badge || '';
+
+          const imgWrap = e('div', 'product-image-wrap');
+          const img = e('img', 'w-full h-48 object-cover'); img.src = p.img; img.alt = p.name;
+          if (p.badge) {
+            const badge = e('span', 'product-badge', p.badge);
+            imgWrap.appendChild(badge);
+          }
+          imgWrap.appendChild(img);
+
+          const body = e('div', 'card-body');
+          const h3 = e('h3', 'text-lg font-semibold', p.name);
+          const desc = e('p', 'text-gray-600 text-sm mb-3', p.desc);
+          const footer = e('div', 'card-footer');
+          const price = e('p', 'font-bold', p.price);
+          const btn = e('button', 'inline-block bg-red-500 hover:bg-red-600 text-white py-2 px-3 rounded-xl buy-btn', 'Beli Sekarang');
+
+          footer.appendChild(price); footer.appendChild(btn);
+          body.appendChild(h3); body.appendChild(desc); body.appendChild(footer);
+
+          art.appendChild(imgWrap); art.appendChild(body);
+          grid.appendChild(art);
+
+          // open modal
+          art.addEventListener('click', () => openModal(p));
+          art.addEventListener('keydown', (e) => { if (e.key === 'Enter') openModal(p); });
+
+          // buy button
+          btn.addEventListener('click', (ev) => { ev.stopPropagation(); window.open(p.link, '_blank'); });
+        });
+      } catch (err) {
+        console.error(err);
+        document.getElementById('product-grid').innerHTML = '<p class="text-red-500">Gagal memuat produk. Pastikan file <code>produk.json</code> ada di folder yang sama.</p>';
+      }
+    }
+
+    // load and render testimonials
+    async function loadTestimonials() {
+      try {
+        const res = await fetch('testi.json');
+        if (!res.ok) throw new Error('testi.json tidak ditemukan');
+        const testis = await res.json();
+        const list = document.getElementById('testimonial-list'); list.innerHTML = '';
+        testis.forEach(t => {
+          const wrap = e('div', 'p-4 rounded-lg bg-gray-50 shadow-sm');
+          const inner = e('div', 'flex items-start gap-3');
+          const col = e('div');
+          const stars = e('div', 'flex items-center');
+          stars.dataset.rating = t.rating;
+          renderStars(stars, t.rating);
+          const name = e('p', 'font-semibold', t.name);
+          const text = e('p', 'text-sm text-gray-600', t.text);
+          col.appendChild(stars); col.appendChild(name); col.appendChild(text);
+          inner.appendChild(col); wrap.appendChild(inner); list.appendChild(wrap);
+        });
+      } catch (err) {
+        console.error(err);
+        document.getElementById('testimonial-list').innerHTML = '<p class="text-red-500">Gagal memuat testi. Pastikan file <code>testi.json</code> ada di folder yang sama.</p>';
+      }
+    }
+
+    // Modal logic (uses object data)
+    const modalWrap = document.getElementById('product-modal');
+    const modalImg = document.getElementById('modal-img');
+    const modalName = document.getElementById('modal-name');
+    const modalDesc = document.getElementById('modal-desc');
+    const modalPrice = document.getElementById('modal-price');
+    const modalBuy = document.getElementById('modal-buy');
+    const modalBadge = document.getElementById('modal-badge');
+    const modalClose = document.getElementById('modal-close');
+    let lastFocused = null;
+
+    function openModal(p) {
+      lastFocused = document.activeElement;
+      modalImg.src = p.img; modalImg.alt = p.name; modalName.textContent = p.name;
+      modalDesc.textContent = p.desc; modalPrice.textContent = p.price; modalBuy.href = p.link;
+      modalBadge.textContent = p.badge || '';
+      modalWrap.classList.remove('hidden'); modalWrap.setAttribute('aria-hidden', 'false'); modalClose.focus(); document.body.style.overflow = 'hidden';
+    }
+    function closeModal() { modalWrap.classList.add('hidden'); modalWrap.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; if (lastFocused) lastFocused.focus(); }
+
+    modalClose.addEventListener('click', closeModal);
+    modalWrap.addEventListener('click', (e) => { if (e.target === modalWrap) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // Init
+    document.addEventListener('DOMContentLoaded', function () {
+      loadProducts();
+      loadTestimonials();
+
+      // Scroll reveal for sections
+      const reveals = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('in-view'); }); }, { threshold: 0.12 });
+      reveals.forEach(r => observer.observe(r));
+    });
+  </script>
+</body>
+</html>
