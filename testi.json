@@ -1,4 +1,3 @@
-// testi.json
 [
   {
     "name": "Rina",
@@ -10,4 +9,5 @@
     "text": "Rasanya oke, tapi sedikit kurang pedas.",
     "rating": 3
   }
+
 ]
