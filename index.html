@@ -305,18 +305,32 @@ function renderStars(container, rating) {
 
 /* ---------- render produk (memperhatikan property ready) ---------- */
 function renderProducts(products) {
-  const grid = document.getElementById('product-grid'); grid.innerHTML = '';
+  const grid = document.getElementById('product-grid');
+  grid.innerHTML = '';
+
+  // urutkan: ready:true dulu, lalu ready:false
+  products.sort((a, b) => {
+    if (a.ready === b.ready) return 0;
+    return a.ready ? -1 : 1;
+  });
+
   products.forEach(p => {
     const art = e('article','rounded-2xl shadow-md bg-white overflow-hidden card product-card');
     art.tabIndex = 0;
-    art.dataset.name = p.name; art.dataset.desc = p.desc; art.dataset.price = p.price; art.dataset.img = p.img; art.dataset.link = p.link; art.dataset.badge = p.badge || '';
+    art.dataset.name = p.name;
+    art.dataset.desc = p.desc;
+    art.dataset.price = p.price;
+    art.dataset.img = p.img;
+    art.dataset.link = p.link;
+    art.dataset.badge = p.badge || '';
 
     // mark not-ready
     if (!p.ready) art.classList.add('not-ready');
 
     // image area
     const imgWrap = e('div','product-image-wrap');
-    const img = e('img','w-full h-48 object-cover'); img.src = p.img; img.alt = p.name;
+    const img = e('img','w-full h-48 object-cover');
+    img.src = p.img; img.alt = p.name;
     if (p.badge) imgWrap.appendChild(e('span','product-badge', p.badge));
     imgWrap.appendChild(img);
 
@@ -332,23 +346,29 @@ function renderProducts(products) {
     if (p.ready) {
       btn.classList.add('bg-red-500','hover:bg-red-600');
       btn.innerText = 'Beli Sekarang';
-      // enable buy (open WA) on click
-      btn.addEventListener('click', (ev) => { ev.stopPropagation(); window.open(p.link, '_blank'); });
-      // open modal on card click
+      btn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        window.open(p.link, '_blank');
+      });
       art.addEventListener('click', () => openModal(p));
-      art.addEventListener('keydown', (e) => { if (e.key === 'Enter') openModal(p); });
+      art.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') openModal(p);
+      });
     } else {
       btn.classList.add('disabled-btn');
       btn.innerText = 'STOK HABIS';
       btn.setAttribute('aria-disabled','true');
       btn.disabled = true;
-      // do NOT attach modal open for not ready products
     }
 
-    footer.appendChild(price); footer.appendChild(btn);
-    body.appendChild(h3); body.appendChild(desc); body.appendChild(footer);
+    footer.appendChild(price);
+    footer.appendChild(btn);
+    body.appendChild(h3);
+    body.appendChild(desc);
+    body.appendChild(footer);
 
-    art.appendChild(imgWrap); art.appendChild(body);
+    art.appendChild(imgWrap);
+    art.appendChild(body);
     grid.appendChild(art);
   });
 }
