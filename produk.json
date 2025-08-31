@@ -27,7 +27,7 @@
     "img": "./img/mochi.jpg",
     "link": "https://wa.me/6285816228602",
     "badge": "Best Deal",
-    "ready": true
+    "ready": false
     },
     {
     "id": 4,
