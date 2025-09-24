@@ -1,0 +1,72 @@
+[
+    {
+    "id": 1,
+    "name": "Udang Rambutan",
+    "desc": "Rasanya gurih kriuk bikin nagih, sekali coba pasti pengen nambah terus!",
+    "price": "Rp6.000",
+    "img": "./img/udangrambutan.jpg",
+    "link": "https://wa.me/6285816228602",
+    "badge": "Populer",
+    "ready": false
+    },
+    {
+    "id": 2,
+    "name": "Cireng Ayam Suwir",
+    "desc": "Gurih kenyal dengan isian ayam berbumbu, ngemil jadi makin seru.",
+    "price": "Rp5.000",
+    "img": "./img/cireng.jpg",
+    "link": "https://wa.me/6285816228602",
+    "badge": "Populer",
+    "ready": false
+    },
+    {
+    "id": 3,
+    "name": "Mochi",
+    "desc": "Kenyal manis yang bikin happy, asik banget buat cemilan santai.",
+    "price": "Rp3.500",
+    "img": "./img/mochi.jpg",
+    "link": "https://wa.me/6285816228602",
+    "badge": "Best Deal",
+    "ready": false
+    },
+    {
+    "id": 4,
+    "name": "Pentol Chili Oil",
+    "desc": "Pentol pedas gurih yang mantul, siap bikin lidah ketagihan!",
+    "price": "Rp5.000",
+    "img": "./img/pentol.jpg",
+    "link": "https://wa.me/6285816228602",
+    "badge": "Pedasnya Nendang!",
+    "ready": false
+    },
+    {
+    "id": 5,
+    "name": "Jemblem",
+    "desc": "Camilan manis tradisional yang bikin kangen, sekali gigit langsung jatuh cinta.",
+    "price": "Rp2.000",
+    "img": "./img/jemblem.jpg",
+    "link": "https://wa.me/6285816228602",
+    "badge": "Jajanan Tradisional",
+    "ready": false
+    },
+    {
+    "id": 6,
+    "name": "Bolu Isi Coklat",
+    "desc": "Lembut manis dengan coklat lumer, cocok banget buat yang doyan ngemil manis.",
+    "price": "Rp5.000",
+    "img": "./img/bolucoklat.jpg",
+    "link": "https://wa.me/6285816228602",
+    "badge": "Jajanan Manis",
+    "ready": false
+    },
+    {
+    "id": 7,
+    "name": "Es Teh",
+    "desc": "Segernya bikin adem kepala, manisnya pas banget buat nemenin makan.",
+    "price": "Rp3.000",
+    "img": "./img/esteh.jpg",
+    "link": "https://wa.me/6285816228602",
+    "badge": "Minuman Segar",
+    "ready": false
+    }
+]

@@ -1,0 +1,470 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cheerfull Foods</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* Basic background & typography */
+    body {
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(249,115,22,0.03), transparent 10%),
+        radial-gradient(circle at 80% 80%, rgba(59,130,246,0.02), transparent 10%),
+        linear-gradient(180deg,#ffffff 0%,#f8fafc 100%);
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    /* Notification bar */
+    #notice { background: linear-gradient(90deg,#f97316,#ef4444); color: white; padding: 8px 12px; text-align:center; font-weight:600; position:relative; }
+    #notice small { font-weight:400; opacity:.95; }
+
+    /* Section heading style */
+    .section-title { display:flex; align-items:center; gap:12px; justify-content:center; }
+    .section-accent { width:56px; height:6px; border-radius:6px; background: linear-gradient(90deg,#f97316,#ef4444); box-shadow:0 6px 18px rgba(239,68,68,0.12); }
+
+    /* Product grid & card layout */
+    .product-grid { align-items:stretch; }
+    .product-card { display:flex; flex-direction:column; height:100%; border-radius:16px; overflow:hidden; transition: transform .28s, box-shadow .28s; }
+    .product-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 30px 80px rgba(2,6,23,0.12); }
+    .card-body { padding:16px; display:flex; flex-direction:column; flex:1 1 auto; }
+    .card-footer { margin-top:auto; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+
+    .product-image-wrap { position:relative; }
+    .product-badge { position:absolute; left:12px; top:12px; background:rgba(255,255,255,0.92); padding:6px 10px; border-radius:999px; font-weight:600; font-size:12px; color:#111827; box-shadow:0 6px 16px rgba(2,6,23,0.06);} 
+
+    /* Out-of-stock / not-ready styling */
+    .not-ready img { filter: grayscale(100%) contrast(.9) brightness(.9); }
+    .not-ready .product-badge { opacity:.7; }
+    .disabled-btn { background:#9ca3af !important; cursor:not-allowed !important; pointer-events:none; }
+
+    /* Modal */
+    .modal-backdrop { position: fixed; inset: 0; background: linear-gradient(180deg, rgba(2,6,23,0.5), rgba(2,6,23,0.65)); display:flex; align-items:center; justify-content:center; z-index:70; padding:24px; }
+    .modal-card { max-width:980px; width:100%; border-radius:14px; overflow:hidden; box-shadow:0 28px 80px rgba(2,6,23,0.5); background: linear-gradient(180deg,#ffffff,#fff7f5); }
+
+    /* Team */
+    .team-card { padding:18px; border-radius:12px; background:linear-gradient(180deg,#ffffff,#f8fafc); display:flex; gap:12px; align-items:center; box-shadow:0 10px 30px rgba(2,6,23,0.06); }
+    .avatar { width:64px; height:64px; border-radius:999px; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; }
+
+    /* Footer responsive */
+    #site-footer { text-align:center; position:static; margin-top:2rem; }
+    @media (max-width:640px) { #site-footer { position:fixed; bottom:16px; right:16px; left:auto; width:auto; padding:10px 14px; border-radius:12px; box-shadow:0 8px 30px rgba(2,6,23,0.16); z-index:60; margin:0; } }
+
+    /* small polish */
+    .reveal { opacity:0; transform: translateY(12px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.in-view { opacity:1; transform: translateY(0); }
+    :focus { outline: 3px solid rgba(99,102,241,0.14); outline-offset:3px; }
+  </style>
+</head>
+<body class="text-gray-800">
+
+  <!-- Top navbar -->
+  <nav class="flex justify-between items-center p-4 bg-white shadow-md sticky top-0 z-50">
+    <h1 class="text-xl font-bold text-red-600">Cheerfull Foods</h1>
+    <div class="space-x-4">
+      <a href="#menu" class="hover:text-red-500">Menu</a>
+      <a href="#testimonials" class="hover:text-red-500">Testimoni</a>
+      <a href="#team" class="hover:text-red-500">Tim Kami</a>
+    </div>
+  </nav>
+
+  <!-- Notification bar (will be filled from notice.json if ada) -->
+  <div id="notice" class="reveal">
+    <small id="notice-text">Info: Buka preorder setiap Senin — cek update di sini (edit notice.json atau di file).</small>
+  </div>
+
+  <!-- Hero -->
+  <header class="p-6 pt-4 max-w-5xl mx-auto reveal" id="hero">
+    <div class="bg-white rounded-2xl shadow-lg p-6 md:flex items-center relative overflow-hidden">
+      <svg class="absolute right-0 top-0 transform translate-x-12 -translate-y-12 opacity-20" width="280" height="280" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#fb923c"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs><circle cx="60" cy="60" r="80" fill="url(#g1)"/></svg>
+      <div class="md:flex-1">
+        <h2 class="text-3xl font-bold mb-2">Selamat datang di <span class="text-red-600">Cheerfull Foods</span></h2>
+        <p class="text-gray-600">Kami dari Tim 2 dari Kelas XII-1.</p>
+      </div>
+      <div class="mt-4 md:mt-0 md:ml-6">
+        <a href="#menu" class="inline-block bg-red-600 text-white py-2 px-4 rounded-xl shadow hover:bg-red-700 buy-btn">Lihat Menu</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Menu Produk -->
+  <section id="menu" class="p-6 max-w-6xl mx-auto reveal">
+    <div class="section-title mb-6">
+      <div class="section-accent"></div>
+      <h2 class="text-2xl font-bold">Menu Produk</h2>
+      <div style="width:56px"></div>
+    </div>
+    <div id="product-grid" class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 product-grid">
+      <!-- Produk akan dirender dari produk.json -->
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section id="testimonials" class="p-6 max-w-6xl mx-auto reveal bg-white rounded-2xl shadow-lg mt-8">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold">Testimoni Pelanggan</h2>
+      </div>
+      <div id="testimonial-list" class="grid sm:grid-cols-2 gap-4">
+        <!-- testi dirender dari testi.json -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Tim Kami -->
+  <section id="team" class="p-6 max-w-6xl mx-auto reveal">
+    <div class="section-title mb-6">
+      <div class="section-accent"></div>
+      <h2 class="text-2xl font-bold">Anggota Tim Kami</h2>
+      <div style="width:56px"></div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <!-- Updated static team members -->
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#f97316,#ef4444);">E</div>
+        <div><p class="font-semibold">I'am Erian M.</p><p class="text-sm text-gray-600">Ketua</p></div>
+      </div>
+
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#60a5fa,#7c3aed);">P</div>
+        <div><p class="font-semibold">Putra Ramanda</p><p class="text-sm text-gray-600">Bendahara</p></div>
+      </div>
+
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#34d399,#10b981);">C</div>
+        <div><p class="font-semibold">Cahya Aprilia K. K.</p><p class="text-sm text-gray-600">Ketua Marketing</p></div>
+      </div>
+
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#f472b6,#fb7185);">S</div>
+        <div><p class="font-semibold">Shelin Septian L.</p><p class="text-sm text-gray-600">Anggota Marketing</p></div>
+      </div>
+
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#f59e0b,#f97316);">S</div>
+        <div><p class="font-semibold">Sulistiyawati</p><p class="text-sm text-gray-600">Ketua Produksi</p></div>
+      </div>
+
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#60a5fa,#06b6d4);">D</div>
+        <div><p class="font-semibold">Dinda Qurrota A. H.</p><p class="text-sm text-gray-600">Anggota Produksi</p></div>
+      </div>
+
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#9f7aea,#06b6d4);">N</div>
+        <div><p class="font-semibold">Nafisa Putri W.</p><p class="text-sm text-gray-600">Bagian Umum / Pembelanjaan</p></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="site-footer" class="bg-red-600 text-white text-center p-4">
+    <p class="text-sm">&copy; 2025 Cheerfull Foods. All rights reserved.</p>
+  </footer>
+
+  <!-- Modal (only × to close) -->
+  <div id="product-modal" class="hidden" aria-hidden="true">
+    <div class="modal-backdrop" role="dialog" aria-modal="true">
+      <div class="modal-card modal-hero">
+        <div class="md:flex">
+          <div class="md:w-1/2 product-image-wrap">
+            <span class="product-badge" id="modal-badge"></span>
+            <img id="modal-img" src="" alt="" class="w-full h-64 object-cover">
+          </div>
+          <div class="p-6 md:w-1/2">
+            <button id="modal-close" class="text-gray-500 float-right" aria-label="Tutup modal">&times;</button>
+            <h3 id="modal-name" class="text-2xl font-bold mb-2"></h3>
+            <p id="modal-desc" class="text-gray-600 mb-4"></p>
+            <p id="modal-price" class="font-bold text-lg mb-4"></p>
+            <div class="flex gap-3">
+              <a id="modal-buy" class="bg-red-600 text-white px-4 py-2 rounded-lg inline-block" target="_blank" rel="noopener">Pesan via WA</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ========== INLINE FALLBACK (dipakai jika fetch file JSON gagal) ========== */
+const INLINE_PRODUCTS = [
+    {
+    "id": 1,
+    "name": "Udang Rambutan",
+    "desc": "Rasanya gurih kriuk bikin nagih, sekali coba pasti pengen nambah terus!",
+    "price": "Rp6.000",
+    "img": "./img/udangrambutan.jpg",
+    "link": "https://wa.me/6285816228602",
+    "badge": "Populer",
+    "ready": false
+    },
+    {
+    "id": 2,
+    "name": "Cireng Ayam Suwir",
+    "desc": "Gurih kenyal dengan isian ayam berbumbu, ngemil jadi makin seru.",
+    "price": "Rp5.000",
+    "img": "./img/cireng.jpg",
+    "link": "https://wa.me/6285816228602",
+    "badge": "Populer",
+    "ready": true
+    },
+    {
+    "id": 3,
+    "name": "Mochi",
+    "desc": "Kenyal manis yang bikin happy, asik banget buat cemilan santai.",
+    "price": "Rp3.500",
+    "img": "./img/mochi.jpg",
+    "link": "https://wa.me/6285816228602",
+    "badge": "Best Deal",
+    "ready": true
+    },
+    {
+    "id": 4,
+    "name": "Pentol Chili Oil",
+    "desc": "Pentol pedas gurih yang mantul, siap bikin lidah ketagihan!",
+    "price": "Rp5.000",
+    "img": "./img/pentol.jpg",
+    "link": "https://wa.me/6285816228602",
+    "badge": "Pedasnya Nendang!",
+    "ready": true
+    },
+    {
+    "id": 5,
+    "name": "Jemblem",
+    "desc": "Camilan manis tradisional yang bikin kangen, sekali gigit langsung jatuh cinta.",
+    "price": "Rp2.000",
+    "img": "./img/jemblem.jpg",
+    "link": "https://wa.me/6285816228602",
+    "badge": "Jajanan Tradisional",
+    "ready": false
+    },
+    {
+    "id": 6,
+    "name": "Bolu Isi Coklat",
+    "desc": "Lembut manis dengan coklat lumer, cocok banget buat yang doyan ngemil manis.",
+    "price": "Rp5.000",
+    "img": "./img/bolucoklat.jpg",
+    "link": "https://wa.me/6285816228602",
+    "badge": "Jajanan Manis",
+    "ready": false
+    },
+    {
+    "id": 7,
+    "name": "Es Teh",
+    "desc": "Segernya bikin adem kepala, manisnya pas banget buat nemenin makan.",
+    "price": "Rp3.000",
+    "img": "./img/esteh.jpg",
+    "link": "https://wa.me/6285816228602",
+    "badge": "Minuman Segar",
+    "ready": true
+    }
+];
+const INLINE_TESTIS = [
+  {
+    "name": "Alvaro, XII-1",
+    "text": "Cirengnya enak.",
+    "rating": 5
+  },
+  {
+    "name": "Zavia, XII-1",
+    "text": "Cireng ayamnya enak, tapi chilinya pedes banget.",
+    "rating": 4
+  },
+  {
+    "name": "Alva, XII-1",
+    "text": "Rasa cirengnya pedes cihuy.",
+    "rating": 5
+  },
+  {
+    "name": "Willy, XII-1",
+    "text": "Cirengnya enak jir, tapi minyaknya kebanyakan.",
+    "rating": 4
+  },
+  {
+    "name": "Aji, XII-1",
+    "text": "Sempol sama saosnya cocok banget!",
+    "rating": 5
+  },
+  {
+    "name": "Alan, XII-1",
+    "text": "Kalo isian cirengnya ayam pedas mungkin lebih enak lagi.",
+    "rating": 4
+  },
+  {
+    "name": "Zavia, XII-1",
+    "text": "Bakso gorengnya walau gapake bumbu tetap enak.",
+    "rating": 5
+  },
+  {
+    "name": "Karin, XII-2",
+    "text": "Bakso gorengnya enak kok.",
+    "rating": 4
+  },
+  {
+    "name": "Rahayu, XII-1",
+    "text": "Sempolnya enak, crispy banget.",
+    "rating": 5
+  },
+];
+const INLINE_NOTICE = "Follow IG Kami : @cheerfull_foods untuk mendapatkan info terbaru!";
+
+/* ---------- small helpers ---------- */
+function e(tag, cls, html) { const el = document.createElement(tag); if (cls) el.className = cls; if (html) el.innerHTML = html; return el; }
+function renderStars(container, rating) {
+  container.innerHTML = '';
+  rating = Math.max(0, Math.min(5, Math.round(rating)));
+  for (let i = 1; i <= 5; i++) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('aria-hidden','true');
+    svg.classList.add('star'); svg.innerHTML = '<path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.4 8.168L12 18.896l-7.334 3.866 1.4-8.168L.132 9.21l8.2-1.192z"/>';
+    svg.style.width='18px'; svg.style.height='18px'; svg.style.marginRight='6px';
+    svg.style.fill = (i <= rating) ? '#f59e0b' : '#d1d5db';
+    container.appendChild(svg);
+  }
+}
+
+/* ---------- render produk (memperhatikan property ready) ---------- */
+function renderProducts(products) {
+  const grid = document.getElementById('product-grid'); grid.innerHTML = '';
+  products.forEach(p => {
+    const art = e('article','rounded-2xl shadow-md bg-white overflow-hidden card product-card');
+    art.tabIndex = 0;
+    art.dataset.name = p.name; art.dataset.desc = p.desc; art.dataset.price = p.price; art.dataset.img = p.img; art.dataset.link = p.link; art.dataset.badge = p.badge || '';
+
+    // mark not-ready
+    if (!p.ready) art.classList.add('not-ready');
+
+    // image area
+    const imgWrap = e('div','product-image-wrap');
+    const img = e('img','w-full h-48 object-cover'); img.src = p.img; img.alt = p.name;
+    if (p.badge) imgWrap.appendChild(e('span','product-badge', p.badge));
+    imgWrap.appendChild(img);
+
+    // body
+    const body = e('div','card-body');
+    const h3 = e('h3','text-lg font-semibold', p.name);
+    const desc = e('p','text-gray-600 text-sm mb-3', p.desc);
+    const footer = e('div','card-footer');
+    const price = e('p','font-bold', p.price);
+
+    // button with ready/stock logic
+    const btn = e('button','inline-block text-white py-2 px-3 rounded-xl buy-btn');
+    if (p.ready) {
+      btn.classList.add('bg-red-500','hover:bg-red-600');
+      btn.innerText = 'Beli Sekarang';
+      // enable buy (open WA) on click
+      btn.addEventListener('click', (ev) => { ev.stopPropagation(); window.open(p.link, '_blank'); });
+      // open modal on card click
+      art.addEventListener('click', () => openModal(p));
+      art.addEventListener('keydown', (e) => { if (e.key === 'Enter') openModal(p); });
+    } else {
+      btn.classList.add('disabled-btn');
+      btn.innerText = 'STOK HABIS';
+      btn.setAttribute('aria-disabled','true');
+      btn.disabled = true;
+      // do NOT attach modal open for not ready products
+    }
+
+    footer.appendChild(price); footer.appendChild(btn);
+    body.appendChild(h3); body.appendChild(desc); body.appendChild(footer);
+
+    art.appendChild(imgWrap); art.appendChild(body);
+    grid.appendChild(art);
+  });
+}
+
+/* ---------- render testimonials ---------- */
+function renderTestimonials(testis) {
+  const list = document.getElementById('testimonial-list'); list.innerHTML = '';
+  testis.forEach(t => {
+    const wrap = e('div','p-4 rounded-lg bg-gray-50 shadow-sm');
+    const inner = e('div','flex items-start gap-3');
+    const col = e('div');
+    const stars = e('div','flex items-center'); renderStars(stars,t.rating);
+    const name = e('p','font-semibold', t.name);
+    const text = e('p','text-sm text-gray-600', t.text);
+    col.appendChild(stars); col.appendChild(name); col.appendChild(text);
+    inner.appendChild(col); wrap.appendChild(inner); list.appendChild(wrap);
+  });
+}
+
+/* ---------- load files produk.json + testi.json + notice.json (fallback inline) ---------- */
+async function loadFiles() {
+  // notice
+  try {
+    const rn = await fetch('notice.json');
+    if (rn.ok) {
+      const n = await rn.json();
+      document.getElementById('notice-text').innerText = n.text || INLINE_NOTICE;
+    } else {
+      document.getElementById('notice-text').innerText = INLINE_NOTICE;
+    }
+  } catch (err) {
+    document.getElementById('notice-text').innerText = INLINE_NOTICE;
+  }
+
+  // produk
+  try {
+    const rp = await fetch('produk.json');
+    if (!rp.ok) throw new Error('produk.json not found');
+    const products = await rp.json();
+    renderProducts(products);
+  } catch (err) {
+    console.warn('produk.json gagal dimuat, fallback ke inline', err.message);
+    renderProducts(INLINE_PRODUCTS);
+  }
+
+  // testi
+  try {
+    const rt = await fetch('testi.json');
+    if (!rt.ok) throw new Error('testi.json not found');
+    const testis = await rt.json();
+    renderTestimonials(testis);
+  } catch (err) {
+    console.warn('testi.json gagal dimuat, fallback ke inline', err.message);
+    renderTestimonials(INLINE_TESTIS);
+  }
+}
+
+/* ---------- modal logic ---------- */
+const modalWrap = document.getElementById('product-modal');
+const modalImg = document.getElementById('modal-img');
+const modalName = document.getElementById('modal-name');
+const modalDesc = document.getElementById('modal-desc');
+const modalPrice = document.getElementById('modal-price');
+const modalBuy = document.getElementById('modal-buy');
+const modalBadge = document.getElementById('modal-badge');
+const modalClose = document.getElementById('modal-close');
+let lastFocused = null;
+
+function openModal(p) {
+  lastFocused = document.activeElement;
+  modalImg.src = p.img; modalImg.alt = p.name; modalName.textContent = p.name;
+  modalDesc.textContent = p.desc; modalPrice.textContent = p.price; modalBuy.href = p.link;
+  modalBadge.textContent = p.badge || '';
+  modalWrap.classList.remove('hidden'); modalWrap.setAttribute('aria-hidden','false'); modalClose.focus(); document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  modalWrap.classList.add('hidden'); modalWrap.setAttribute('aria-hidden','true'); document.body.style.overflow = ''; if (lastFocused) lastFocused.focus();
+}
+modalClose.addEventListener('click', closeModal);
+modalWrap.addEventListener('click', (e) => { if (e.target === modalWrap) closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+/* ---------- init ---------- */
+document.addEventListener('DOMContentLoaded', function () {
+  loadFiles();
+
+  // reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('in-view'); }); }, {threshold: 0.12});
+  reveals.forEach(r => observer.observe(r));
+});
+</script>
+</body>
+</html>
